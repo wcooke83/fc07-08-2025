@@ -1,0 +1,101 @@
+# Next.js
+.next/
+out/
+
+# Node.js
+node_modules/
+.npm
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging.local
+
+# TypeScript
+*.tsbuildinfo
+
+# VS Code
+.vscode/
+
+# npm
+npm-debug.log*
+.pnpm-debug.log*
+.yarn-debug.log*
+.pnpm-store/
+
+# macOS
+.DS_Store
+
+# Thumbnails
+.thumbnails/
+
+# Logs
+logs/
+*.log
+
+# Misc
+.env
+.env.*
+.idea/
+.DS_Store
+*.tgz
+*.swp
+*.swo
+*.bak
+*.tmp
+*.sublime-project
+*.sublime-workspace
+*.history
+*.log
+*.csv
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.json
+*.xml
+*.yml
+*.yaml
+*.toml
+*.ini
+*.cfg
+*.conf
+*.pid
+*.sock
+*.lock
+*.backup
+*.orig
+*.rej
+*.diff
+*.patch
+*.swp
+*.swo
+*.bak
+*.tmp
+*.sublime-project
+*.sublime-workspace
+*.history
+*.log
+*.csv
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.json
+*.xml
+*.yml
+*.yaml
+*.toml
+*.ini
+*.cfg
+*.conf
+*.pid
+*.sock
+*.lock
+*.backup
+*.orig
+*.rej
+*.diff
+*.patch
+# Vercel
+.vercel/

@@ -1,0 +1,40 @@
+This Non-Disclosure Agreement (the "Agreement") is made and entered into as of {{date}} by and between {{disclosingPartyName}}, a company organized and existing under the laws of {{disclosingPartyJurisdiction}}, with its principal place of business located at {{disclosingPartyAddress}} ("Disclosing Party"), and {{receivingPartyName}}, an individual/entity organized and existing under the laws of {{receivingPartyJurisdiction}}, with its principal place of business/residence located at {{receivingPartyAddress}} ("Receiving Party").
+
+WHEREAS, Disclosing Party possesses certain confidential and proprietary information, and Receiving Party desires to receive such information for the purpose of {{purposeOfDisclosure}} (the "Purpose").
+
+NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, the parties agree as follows:
+
+1.  **Confidential Information.** "Confidential Information" means any and all information disclosed by Disclosing Party to Receiving Party, whether orally, in writing, electronically, or by any other means, that is designated as confidential or that, by its nature, would reasonably be understood to be confidential. This includes, but is not limited to, {{confidentialInformationExamples}}.
+
+2.  **Obligations of Receiving Party.** Receiving Party agrees to:
+    a.  Use the Confidential Information solely for the Purpose.
+    b.  Maintain the Confidential Information in strict confidence and not disclose it to any third party without the prior written consent of Disclosing Party.
+    c.  Protect the Confidential Information with the same degree of care as Receiving Party uses to protect its own confidential information, but in no event less than a reasonable degree of care.
+    d.  Limit access to the Confidential Information to those of its employees, agents, or representatives who have a need to know such information for the Purpose and who are bound by confidentiality obligations at least as restrictive as those contained herein.
+
+3.  **Exclusions.** The obligations of confidentiality shall not apply to information that:
+    a.  Is or becomes publicly available through no fault of Receiving Party.
+    b.  Was known to Receiving Party prior to its disclosure by Disclosing Party.
+    c.  Is independently developed by Receiving Party without use of or reference to the Confidential Information.
+    d.  Is rightfully obtained by Receiving Party from a third party without restriction on disclosure.
+    e.  Is required to be disclosed by law or court order, provided Receiving Party gives prompt notice to Disclosing Party to allow for protective measures.
+
+4.  **Term.** This Agreement shall commence on the date first written above and shall continue for a period of {{termLength}} years. The obligations of confidentiality shall survive the termination of this Agreement.
+
+5.  **Return of Information.** Upon termination of this Agreement or upon written request of Disclosing Party, Receiving Party shall promptly return or destroy all Confidential Information and any copies thereof.
+
+6.  **Governing Law.** This Agreement shall be governed by and construed in accordance with the laws of {{governingLawJurisdiction}}.
+
+7.  **Entire Agreement.** This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements and understandings, whether written or oral.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+**Disclosing Party:**
+By: _________________________
+Name: {{disclosingPartySignatoryName}}
+Title: {{disclosingPartySignatoryTitle}}
+
+**Receiving Party:**
+By: _________________________
+Name: {{receivingPartySignatoryName}}
+Title: {{receivingPartySignatoryTitle}}

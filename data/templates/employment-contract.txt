@@ -1,0 +1,34 @@
+This Employment Contract (the "Agreement") is made and entered into as of {{date}} by and between {{companyName}}, a company organized and existing under the laws of {{companyJurisdiction}}, with its principal place of business located at {{companyAddress}} ("Company"), and {{employeeName}}, residing at {{employeeAddress}} ("Employee").
+
+WHEREAS, Company desires to employ Employee, and Employee desires to be employed by Company, subject to the terms and conditions set forth herein.
+
+NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, the parties agree as follows:
+
+1.  **Position and Duties.** Company hereby employs Employee in the position of {{jobTitle}}. Employee shall perform such duties and responsibilities as are customarily associated with this position and as may be assigned by Company from time to time.
+
+2.  **Term of Employment.** This Agreement shall commence on {{startDate}} and shall continue until terminated in accordance with the provisions of this Agreement.
+
+3.  **Compensation.** Employee's annual salary shall be {{annualSalary}} ({{salaryCurrency}}), payable in {{paymentFrequency}} installments. Employee shall also be eligible for {{benefitsDescription}}.
+
+4.  **Work Hours.** Employee's regular work hours shall be {{workHours}} per week, from {{workDays}} to {{workDaysEnd}}.
+
+5.  **Confidentiality.** Employee acknowledges that during the course of employment, Employee may have access to confidential and proprietary information of Company. Employee agrees to keep such information strictly confidential and not to disclose it to any third party.
+
+6.  **Intellectual Property.** All intellectual property rights in any work product created by Employee in connection with employment shall be the sole and exclusive property of Company.
+
+7.  **Termination.** This Agreement may be terminated by either party upon {{noticePeriod}} days' written notice to the other party. Company may terminate this Agreement immediately for cause, including but not limited to {{causeForTermination}}.
+
+8.  **Governing Law.** This Agreement shall be governed by and construed in accordance with the laws of {{governingLawJurisdiction}}.
+
+9.  **Entire Agreement.** This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements and understandings, whether written or oral.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+**Company:**
+By: _________________________
+Name: {{companySignatoryName}}
+Title: {{companySignatoryTitle}}
+
+**Employee:**
+By: _________________________
+Name: {{employeeSignatoryName}}

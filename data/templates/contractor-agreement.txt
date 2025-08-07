@@ -1,0 +1,38 @@
+This Contractor Agreement (the "Agreement") is made and entered into as of {{date}} by and between {{companyName}}, a company organized and existing under the laws of {{companyJurisdiction}}, with its principal place of business located at {{companyAddress}} ("Company"), and {{contractorName}}, an individual/entity organized and existing under the laws of {{contractorJurisdiction}}, with its principal place of business/residence located at {{contractorAddress}} ("Contractor").
+
+WHEREAS, Company desires to retain the services of Contractor to perform certain work, and Contractor desires to provide such services to Company, subject to the terms and conditions set forth herein.
+
+NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, the parties agree as follows:
+
+1.  **Services.** Contractor agrees to perform the services described in Exhibit A attached hereto (the "Services"). The Services shall be performed in a professional and workmanlike manner, in accordance with industry standards and best practices.
+
+2.  **Term.** This Agreement shall commence on {{startDate}} and shall continue until {{endDate}}, unless earlier terminated in accordance with the provisions of this Agreement.
+
+3.  **Compensation.** In consideration for the Services, Company shall pay Contractor a total fee of {{compensationAmount}} ({{compensationCurrency}}) as follows: {{paymentTerms}}.
+
+4.  **Independent Contractor.** Contractor is an independent contractor and not an employee, agent, or partner of Company. Contractor shall be solely responsible for all taxes, withholdings, and other statutory obligations.
+
+5.  **Confidentiality.** Contractor acknowledges that during the course of performing the Services, Contractor may have access to confidential and proprietary information of Company. Contractor agrees to keep such information strictly confidential and not to disclose it to any third party.
+
+6.  **Intellectual Property.** All intellectual property rights in any work product created by Contractor in connection with the Services shall be the sole and exclusive property of Company.
+
+7.  **Termination.** This Agreement may be terminated by either party upon {{noticePeriod}} days' written notice to the other party.
+
+8.  **Governing Law.** This Agreement shall be governed by and construed in accordance with the laws of {{governingLawJurisdiction}}.
+
+9.  **Entire Agreement.** This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements and understandings, whether written or oral.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+**Company:**
+By: _________________________
+Name: {{companySignatoryName}}
+Title: {{companySignatoryTitle}}
+
+**Contractor:**
+By: _________________________
+Name: {{contractorSignatoryName}}
+Title: {{contractorSignatoryTitle}}
+
+**Exhibit A: Description of Services**
+{{servicesDescription}}

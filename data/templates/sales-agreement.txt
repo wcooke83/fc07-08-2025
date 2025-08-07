@@ -1,0 +1,37 @@
+This Sales Agreement (the "Agreement") is made and entered into as of {{date}} by and between {{sellerName}}, a company organized and existing under the laws of {{sellerJurisdiction}}, with its principal place of business located at {{sellerAddress}} ("Seller"), and {{buyerName}}, an individual/entity organized and existing under the laws of {{buyerJurisdiction}}, with its principal place of business/residence located at {{buyerAddress}} ("Buyer").
+
+WHEREAS, Seller desires to sell, and Buyer desires to purchase, certain goods/services as described herein.
+
+NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, the parties agree as follows:
+
+1.  **Goods/Services.** Seller agrees to sell and Buyer agrees to purchase the following goods/services (the "Goods/Services"):
+    a.  Description: {{goodsDescription}}
+    b.  Quantity: {{quantity}}
+    c.  Unit Price: {{unitPrice}} ({{unitPriceCurrency}})
+    d.  Total Price: {{totalPrice}} ({{totalPriceCurrency}})
+
+2.  **Payment Terms.** Buyer shall pay the Total Price as follows: {{paymentTerms}}.
+
+3.  **Delivery.** The Goods/Services shall be delivered to {{deliveryAddress}} on or before {{deliveryDate}}.
+
+4.  **Inspection.** Buyer shall inspect the Goods/Services upon delivery and notify Seller of any defects or non-conformities within {{inspectionPeriod}} days of delivery.
+
+5.  **Warranties.** Seller warrants that the Goods/Services are free from defects in material and workmanship for a period of {{warrantyPeriod}} from the date of delivery.
+
+6.  **Limitation of Liability.** Seller's liability under this Agreement shall be limited to the Total Price paid by Buyer for the Goods/Services.
+
+7.  **Governing Law.** This Agreement shall be governed by and construed in accordance with the laws of {{governingLawJurisdiction}}.
+
+8.  **Entire Agreement.** This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements and understandings, whether written or oral.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+**Seller:**
+By: _________________________
+Name: {{sellerSignatoryName}}
+Title: {{sellerSignatoryTitle}}
+
+**Buyer:**
+By: _________________________
+Name: {{buyerSignatoryName}}
+Title: {{buyerSignatoryTitle}}
