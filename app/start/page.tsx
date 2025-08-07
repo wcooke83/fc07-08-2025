@@ -24,10 +24,12 @@ interface ContractTemplate {
 export default function StartPage() {
   const [templates, setTemplates] = useState<ContractTemplate[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchTemplates = async () => {
     console.log("🔍 [START] Starting fetchTemplates function...")
     setIsLoading(true)
+    setError(null)
     
     try {
       // Create Supabase client directly with environment variables
@@ -37,122 +39,84 @@ export default function StartPage() {
       console.log("🔍 [START] Environment check:")
       console.log("- Supabase URL exists:", !!supabaseUrl)
       console.log("- Supabase Key exists:", !!supabaseAnonKey)
-      console.log("- URL (first 20 chars):", supabaseUrl?.substring(0, 20))
+      console.log("- URL (first 30 chars):", supabaseUrl?.substring(0, 30))
       
       if (!supabaseUrl || !supabaseAnonKey) {
         console.error("❌ [START] Missing Supabase environment variables")
+        setError("Database configuration missing")
         setTemplates(getFallbackTemplates())
         return
       }
       
       const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
-          persistSession: false
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false
+        },
+        global: {
+          headers: {
+            'apikey': supabaseAnonKey
+          }
         }
       })
       
-      console.log("📡 [START] Supabase client created directly")
+      console.log("📡 [START] Supabase client created with enhanced config")
       
-      // Test basic connection with a simple query
-      console.log("🔍 [START] Testing basic connection...")
-      const { data: healthCheck, error: healthError } = await supabase
-        .from('contract_templates')
-        .select('id')
-        .limit(1)
-      
-      console.log("📊 [START] Health check result:")
-      console.log("- Error:", healthError)
-      console.log("- Data:", healthCheck)
-      
-      if (healthError) {
-        console.error("❌ [START] Health check failed:", healthError)
-        
-        // Check if it's an RLS issue
-        if (healthError.message?.includes('RLS') || healthError.message?.includes('policy')) {
-          console.log("🔍 [START] Possible RLS issue detected, trying with service role...")
-          // Note: In production, you'd use a server-side API route for this
-        }
-        
-        setTemplates(getFallbackTemplates())
-        return
-      }
-      
-      // Try to get all records with detailed logging
-      console.log("📊 [START] Querying all contract templates...")
+      // First, try to fetch templates with a simple query
+      console.log("📊 [START] Attempting to fetch contract templates...")
       const { data, error, count } = await supabase
         .from('contract_templates')
         .select('*', { count: 'exact' })
         .order('contract_type')
       
-      console.log("📊 [START] Detailed query result:")
+      console.log("📊 [START] Query result:")
       console.log("- Error:", error)
       console.log("- Count:", count)
-      console.log("- Data array length:", data?.length || 0)
-      console.log("- Raw data:", data)
+      console.log("- Data length:", data?.length || 0)
+      console.log("- First record:", data?.[0])
       
       if (error) {
-        console.error("❌ [START] Query error details:")
-        console.error("- Code:", error.code)
-        console.error("- Message:", error.message)
-        console.error("- Details:", error.details)
-        console.error("- Hint:", error.hint)
+        console.error("❌ [START] Database error:", error)
+        
+        // Check if it's an RLS/permission issue
+        if (error.code === 'PGRST116' || error.message?.includes('permission') || error.message?.includes('RLS')) {
+          console.log("🔍 [START] RLS/Permission issue detected")
+          setError("Database access restricted. Using fallback templates.")
+        } else {
+          setError(`Database error: ${error.message}`)
+        }
+        
         setTemplates(getFallbackTemplates())
         return
       }
       
       if (!data || data.length === 0) {
-        console.warn("⚠️ [START] No data returned from query")
-        console.log("🔍 [START] Trying alternative query approaches...")
-        
-        // Try without ordering
-        const { data: altData, error: altError } = await supabase
-          .from('contract_templates')
-          .select('*')
-        
-        console.log("📊 [START] Alternative query result:")
-        console.log("- Error:", altError)
-        console.log("- Data length:", altData?.length || 0)
-        
-        if (altData && altData.length > 0) {
-          console.log("✅ [START] Found data with alternative query")
-          setTemplates(altData)
-          return
-        }
-        
-        // Try with explicit schema
-        const { data: schemaData, error: schemaError } = await supabase
-          .from('public.contract_templates')
-          .select('*')
-        
-        console.log("📊 [START] Schema-explicit query result:")
-        console.log("- Error:", schemaError)
-        console.log("- Data length:", schemaData?.length || 0)
-        
-        if (schemaData && schemaData.length > 0) {
-          console.log("✅ [START] Found data with schema-explicit query")
-          setTemplates(schemaData)
-          return
-        }
-        
+        console.warn("⚠️ [START] No data returned from database")
+        setError("No templates found in database. Using fallback templates.")
         setTemplates(getFallbackTemplates())
         return
       }
       
-      // Filter active templates in JavaScript if needed
+      // Filter active templates
       const activeTemplates = data.filter(template => template.is_active !== false)
-      console.log("✅ [START] Active templates found:", activeTemplates.length)
-      console.log("📋 [START] Template details:")
+      console.log("✅ [START] Successfully loaded templates:")
+      console.log(`- Total templates: ${data.length}`)
+      console.log(`- Active templates: ${activeTemplates.length}`)
+      
       activeTemplates.forEach((template, index) => {
-        console.log(`  ${index + 1}. ${template.contract_type} (${template.name || 'No name'})`)
+        console.log(`  ${index + 1}. ${template.contract_type} - ${template.name || 'No name'}`)
       })
       
       setTemplates(activeTemplates.length > 0 ? activeTemplates : data)
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("💥 [START] Exception in fetchTemplates:")
       console.error("- Name:", error.name)
       console.error("- Message:", error.message)
       console.error("- Stack:", error.stack)
+      
+      setError(`Connection error: ${error.message}`)
       setTemplates(getFallbackTemplates())
     } finally {
       console.log("🏁 [START] fetchTemplates completed")
@@ -333,12 +297,24 @@ export default function StartPage() {
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Select from our professionally crafted contract templates. Each template is designed to be legally sound and easy to customize.
           </p>
+          
+          {/* Error Message */}
+          {error && (
+            <div className="mb-8 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <div className="flex items-center">
+                <Shield className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mr-2" />
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">{error}</p>
+              </div>
+            </div>
+          )}
+          
           {/* Debug Information */}
           <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
             <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Debug Information</h3>
             <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
               <div>Templates loaded: {templates.length}</div>
               <div>Loading state: {isLoading ? 'true' : 'false'}</div>
+              <div>Error state: {error || 'none'}</div>
               <div className="text-left">
                 <div>Templates data:</div>
                 <pre className="mt-1 text-xs bg-blue-100 dark:bg-blue-800 p-2 rounded overflow-auto max-h-32">
@@ -415,6 +391,10 @@ export default function StartPage() {
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               We're currently setting up contract templates. Please check back soon.
             </p>
+            <Button onClick={fetchTemplates} variant="outline">
+              <ArrowRight className="h-4 w-4 mr-2" />
+              Retry Loading Templates
+            </Button>
           </div>
         )}
 
