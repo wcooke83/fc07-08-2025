@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ProgressBar } from "@/components/progress-bar"
-import { Loader2, ArrowLeft, Save } from "lucide-react"
+import { Loader2, ArrowLeft, Save } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
 import { createBrowserClient } from "@/lib/supabase/createBrowserClient"
 import { useAuth } from "@/lib/auth-client"
@@ -282,7 +282,7 @@ export default function ContractPage({ params, searchParams }: ContractPageProps
       <main className="flex-1 p-4 md:p-6">
         <div className="container mx-auto py-8">
           <div className="mb-8 flex items-center justify-between">
-            <Button variant="outline" onClick={() => router.back()}>
+            <Button variant="outline" onClick={() => router.back()} className="px-8">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
             <h1 className="text-3xl font-bold">{template.name}</h1>

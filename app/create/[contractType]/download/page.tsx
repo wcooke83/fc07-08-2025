@@ -281,17 +281,17 @@ return (
                   {/* Download Options */}
                   <div className="grid md:grid-cols-3 gap-6 mb-8">
                     {/* PDF Document */}
-                    <div className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-lg p-6 hover:border-gray-300 dark:hover:border-slate-400 transition-colors">
+                    <div className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-lg p-6 hover:border-gray-400 dark:hover:border-slate-400 transition-colors flex flex-col">
                       <div className="bg-red-100 dark:bg-red-900/20 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
                         <FileText className="h-8 w-8 text-red-600 dark:text-red-400" />
                       </div>
                       <h4 className="font-semibold text-gray-900 dark:text-white mb-2">PDF Document</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
                         Professional format, ready to print and sign
                       </p>
                       <Button 
                         onClick={() => handleDownload('pdf')}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-auto"
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Download PDF
@@ -299,18 +299,18 @@ return (
                     </div>
 
                     {/* Word Document */}
-                    <div className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-lg p-6 hover:border-gray-300 dark:hover:border-slate-400 transition-colors">
+                    <div className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-lg p-6 hover:border-gray-400 dark:hover:border-slate-400 transition-colors flex flex-col">
                       <div className="bg-blue-100 dark:bg-blue-900/20 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
                         <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                       </div>
                       <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Word Document</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
                         Fully editable Microsoft Word format
                       </p>
                       <Button 
                         onClick={() => handleDownload('docx')}
                         variant="outline"
-                        className="w-full"
+                        className="w-full mt-auto"
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Download DOCX
@@ -318,18 +318,18 @@ return (
                     </div>
 
                     {/* Plain Text */}
-                    <div className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-lg p-6 hover:border-gray-300 dark:hover:border-slate-400 transition-colors">
+                    <div className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-lg p-6 hover:border-gray-400 dark:hover:border-slate-400 transition-colors flex flex-col">
                       <div className="bg-green-100 dark:bg-green-900/20 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
                         <FileText className="h-8 w-8 text-green-600 dark:text-green-400" />
                       </div>
                       <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Plain Text</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
                         Simple text format for any application
                       </p>
                       <Button 
                         onClick={() => handleDownload('txt')}
                         variant="outline"
-                        className="w-full"
+                        className="w-full mt-auto"
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Download TXT
@@ -352,7 +352,7 @@ return (
 
                   {/* Navigation */}
                   <div className="flex justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <Button variant="outline" onClick={handleBack}>
+                    <Button variant="outline" onClick={handleBack} className="px-8">
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Back
                     </Button>

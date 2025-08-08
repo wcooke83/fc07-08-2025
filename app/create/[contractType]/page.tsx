@@ -129,7 +129,7 @@ export default function CreateContractPage() {
             <h1 className="text-2xl font-bold mb-2">Contract Not Found</h1>
             <p className="text-gray-600 mb-6">The contract type "{contractType}" was not found.</p>
             <Link href="/contracts">
-              <Button>
+              <Button className="px-8">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Contracts
               </Button>
@@ -285,11 +285,17 @@ export default function CreateContractPage() {
                 <SelectValue placeholder={field.placeholder || `Select ${field.label}`} />
               </SelectTrigger>
               <SelectContent>
-                {field.options?.map((option: string) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
+                {field.options?.map((option: any, index: number) => {
+                  // Handle both string options and object options with label/value
+                  const optionValue = typeof option === 'string' ? option : option.value
+                  const optionLabel = typeof option === 'string' ? option : option.label
+                  
+                  return (
+                    <SelectItem key={`${field.id}-option-${index}`} value={optionValue}>
+                      {optionLabel}
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
             {hasError && (
@@ -453,7 +459,7 @@ export default function CreateContractPage() {
                   <div className="h-4"></div>
 
                   <div className="flex justify-between">
-                    <Button variant="outline" onClick={handleBack}>
+                    <Button variant="outline" onClick={handleBack} className="px-8">
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Back
                     </Button>

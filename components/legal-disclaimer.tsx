@@ -7,7 +7,7 @@ export function LegalDisclaimer() {
         {/* Icon Column */}
         <div className="flex-shrink-0">
           <div className="w-14 h-14 bg-amber-600 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-            <Scale className="dark:text-blue-400 h-6 w-66 text-white" />
+            <Scale className="dark:text-blue-400 h-7 w-7 text-white" />
           </div>
         </div>
         
