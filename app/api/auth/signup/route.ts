@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClientAppRouter } from "@/lib/supabase/createServerClient"
+import { createServerClientAppRouter } from "@/lib/supabase/createAppRouterClient"
 
 export async function POST(request: NextRequest) {
   try {

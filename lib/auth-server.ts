@@ -1,4 +1,4 @@
-import { createServerClientAppRouter } from "./supabase/createServerClient"
+import { createServerClientAppRouter } from "./supabase/createAppRouterClient"
 
 export async function getCurrentUser() {
   try {

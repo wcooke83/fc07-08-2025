@@ -1,50 +1,41 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClientAppRouter } from "@/lib/supabase/createServerClient"
+import { createServerClientAppRouter } from "@/lib/supabase/createAppRouterClient"
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const body = await request.json()
+    const email = body.email
+    const password = body.password
 
-    console.log("[SIGNIN API] Received signin request:", { email })
+    console.log("[AUTH API] Sign-in attempt for:", email)
 
-    // Validate required fields
     if (!email || !password) {
-      console.log("[SIGNIN API] Missing required fields")
+      console.log("[AUTH API] Missing email or password")
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
     }
 
     const supabase = createServerClientAppRouter()
 
-    console.log("[SIGNIN API] Signing in with Supabase...")
-
-    // Sign in with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
     if (error) {
-      console.error("[SIGNIN API] Supabase signin error:", error)
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error("[AUTH API] Sign-in error:", error.message)
+      return NextResponse.json({ error: error.message || "Authentication failed" }, { status: 401 })
     }
 
-    console.log("[SIGNIN API] User signed in successfully:", {
-      userId: data.user?.id,
-      email: data.user?.email,
-    })
-
-    // Return success response
-    return NextResponse.json({
-      message: "User signed in successfully",
-      user: {
-        id: data.user?.id,
-        email: data.user?.email,
-        user_metadata: data.user?.user_metadata,
+    console.log("[AUTH API] Sign-in successful for:", email)
+    return NextResponse.json(
+      {
+        message: "Sign-in successful",
+        user: data.user,
       },
-      session: data.session,
-    })
+      { status: 200 },
+    )
   } catch (error) {
-    console.error("[SIGNIN API] Unexpected error:", error)
+    console.error("[AUTH API] Unexpected error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

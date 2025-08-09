@@ -1,43 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClientAppRouter } from "@/lib/supabase/createServerClient"
+import { createServerClientAppRouter } from "@/lib/supabase/createAppRouterClient"
 
 export async function GET(request: NextRequest) {
-  try {
-    console.log("[USER API] Getting current user...")
+  const supabase = createServerClientAppRouter()
 
-    const supabase = createServerClientAppRouter()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser()
-
-    if (error) {
-      console.error("[USER API] Error getting user:", error)
-      return NextResponse.json({ error: error.message }, { status: 401 })
-    }
-
-    if (!user) {
-      console.log("[USER API] No user found")
-      return NextResponse.json({ error: "No user found" }, { status: 401 })
-    }
-
-    console.log("[USER API] User found:", {
-      id: user.id,
-      email: user.email,
-    })
-
-    return NextResponse.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        user_metadata: user.user_metadata,
-        created_at: user.created_at,
-        updated_at: user.updated_at,
-      },
-    })
-  } catch (error) {
-    console.error("[USER API] Unexpected error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-  }
+  return NextResponse.json({ user })
 }
