@@ -7,21 +7,22 @@ export async function GET(request: NextRequest) {
   try {
     console.log("[USER API] Getting current user...")
 
-    const supabase = await createServerClientAppRouter()
+    const supabase = createServerClientAppRouter()
 
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser()
 
-    if (error) {
+    // Don't treat missing session as an error - just return null user
+    if (error && error.message !== "Auth session missing!") {
       console.error("[USER API] Error getting user:", error)
       return NextResponse.json({ error: error.message }, { status: 401 })
     }
 
     if (!user) {
-      console.log("[USER API] No user found")
-      return NextResponse.json({ error: "No user found" }, { status: 401 })
+      console.log("[USER API] No user found - returning null")
+      return NextResponse.json({ user: null })
     }
 
     console.log("[USER API] User found:", {

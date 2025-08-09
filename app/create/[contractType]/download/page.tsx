@@ -23,10 +23,30 @@ export default function DownloadContractPage() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(false)
 
   useEffect(() => {
-    checkUser()
-  }, [])
+    // Load contract data immediately without checking auth
+    loadContractData()
+    // Check user in background but don't block the page
+    checkUserInBackground()
+  }, [contractType])
 
-  const checkUser = async () => {
+  const loadContractData = () => {
+    try {
+      // Try to get contract data from localStorage
+      const savedContract = localStorage.getItem(`contract_${contractType}`)
+      if (savedContract) {
+        const parsedContract = JSON.parse(savedContract)
+        setContractData(parsedContract)
+      } else {
+        console.warn("No contract data found")
+      }
+    } catch (error) {
+      console.error("Error loading contract data:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const checkUserInBackground = async () => {
     try {
       const response = await fetch("/api/auth/user", {
         credentials: "include",
@@ -50,27 +70,6 @@ export default function DownloadContractPage() {
       setUserData(null)
     }
   }
-
-  useEffect(() => {
-    const loadContractData = () => {
-      try {
-        // Try to get contract data from localStorage
-        const savedContract = localStorage.getItem(`contract_${contractType}`)
-        if (savedContract) {
-          const parsedContract = JSON.parse(savedContract)
-          setContractData(parsedContract)
-        } else {
-          console.warn("No contract data found")
-        }
-      } catch (error) {
-        console.error("Error loading contract data:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadContractData()
-  }, [contractType])
 
   const progress = 100 // Step 3 of 3
 
@@ -127,9 +126,10 @@ export default function DownloadContractPage() {
       return
     }
 
-    await checkUser() // Refresh user state
+    // Refresh user state after auth
+    await checkUserInBackground()
 
-    // Save contract to newly created user
+    // Save contract to newly authenticated user
     await saveContractToUser()
 
     if (mode === "register") {
@@ -290,7 +290,7 @@ export default function DownloadContractPage() {
                           <h4 className="font-medium text-green-900 dark:text-green-100">Contract Ready!</h4>
                           <p className="text-sm text-green-700 dark:text-green-300 mt-1">
                             Your contract template has been generated and is ready for download. Choose your preferred
-                            format above. Remember to have it reviewed by a qualified attorney before use.
+                            format below. {!userData && "You'll be prompted to sign in when you download or complete."}
                           </p>
                         </div>
                       </div>
@@ -307,12 +307,13 @@ export default function DownloadContractPage() {
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
                           Professional format, ready to print and sign
                         </p>
-                        <Button 
-                          onClick={() => handleDownload('pdf')}
+                        <Button
+                          onClick={() => handleDownload("pdf")}
                           className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-auto"
+                          disabled={isCheckingAuth}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download PDF
+                          {isCheckingAuth ? "Processing..." : "Download PDF"}
                         </Button>
                       </div>
 
@@ -325,13 +326,14 @@ export default function DownloadContractPage() {
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
                           Fully editable Microsoft Word format
                         </p>
-                        <Button 
-                          onClick={() => handleDownload('docx')}
+                        <Button
+                          onClick={() => handleDownload("docx")}
                           variant="outline"
                           className="w-full mt-auto"
+                          disabled={isCheckingAuth}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download DOCX
+                          {isCheckingAuth ? "Processing..." : "Download DOCX"}
                         </Button>
                       </div>
 
@@ -344,13 +346,14 @@ export default function DownloadContractPage() {
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
                           Simple text format for any application
                         </p>
-                        <Button 
-                          onClick={() => handleDownload('txt')}
+                        <Button
+                          onClick={() => handleDownload("txt")}
                           variant="outline"
                           className="w-full mt-auto"
+                          disabled={isCheckingAuth}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download TXT
+                          {isCheckingAuth ? "Processing..." : "Download TXT"}
                         </Button>
                       </div>
                     </div>
@@ -376,8 +379,12 @@ export default function DownloadContractPage() {
                         Back
                       </Button>
 
-                      <Button onClick={handleComplete} className="bg-green-600 hover:bg-green-700 text-white">
-                        Complete
+                      <Button
+                        onClick={handleComplete}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        disabled={isCheckingAuth}
+                      >
+                        {isCheckingAuth ? "Processing..." : "Complete"}
                         <CheckCircle className="h-4 w-4 ml-2" />
                       </Button>
                     </div>
@@ -438,6 +445,7 @@ export default function DownloadContractPage() {
             </Card>
           </div>
         </div>
+
         {/* Auth Modal */}
         <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onSuccess={handleAuthSuccess} />
       </div>
