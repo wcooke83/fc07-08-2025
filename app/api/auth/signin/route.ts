@@ -1,54 +1,50 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
+import { createServerClientAppRouter } from "@/lib/supabase/createServerClient"
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const requestUrl = new URL(request.url)
-    const body = await request.json()
-    const email = body.email
-    const password = body.password
+    const { email, password } = await request.json()
 
-    console.log("[AUTH API] Sign-in attempt for:", email)
+    console.log("[SIGNIN API] Received signin request:", { email })
 
+    // Validate required fields
     if (!email || !password) {
-      console.log("[AUTH API] Missing email or password")
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      )
+      console.log("[SIGNIN API] Missing required fields")
+      return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
     }
 
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+    const supabase = createServerClientAppRouter()
 
+    console.log("[SIGNIN API] Signing in with Supabase...")
+
+    // Sign in with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
     if (error) {
-      console.error("[AUTH API] Sign-in error:", error.message)
-      return NextResponse.json(
-        { error: error.message || "Authentication failed" },
-        { status: 401 }
-      )
+      console.error("[SIGNIN API] Supabase signin error:", error)
+      return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
-    console.log("[AUTH API] Sign-in successful for:", email)
-    return NextResponse.json(
-      { 
-        message: "Sign-in successful",
-        user: data.user 
-      },
-      { status: 200 }
-    )
+    console.log("[SIGNIN API] User signed in successfully:", {
+      userId: data.user?.id,
+      email: data.user?.email,
+    })
 
+    // Return success response
+    return NextResponse.json({
+      message: "User signed in successfully",
+      user: {
+        id: data.user?.id,
+        email: data.user?.email,
+        user_metadata: data.user?.user_metadata,
+      },
+      session: data.session,
+    })
   } catch (error) {
-    console.error("[AUTH API] Unexpected error:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    console.error("[SIGNIN API] Unexpected error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

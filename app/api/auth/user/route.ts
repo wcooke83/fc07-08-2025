@@ -1,14 +1,43 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
+import { createServerClientAppRouter } from "@/lib/supabase/createServerClient"
 
-export async function GET(request: Request) {
-  const cookieStore = cookies()
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+export async function GET(request: NextRequest) {
+  try {
+    console.log("[USER API] Getting current user...")
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    const supabase = createServerClientAppRouter()
 
-  return NextResponse.json({ user })
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser()
+
+    if (error) {
+      console.error("[USER API] Error getting user:", error)
+      return NextResponse.json({ error: error.message }, { status: 401 })
+    }
+
+    if (!user) {
+      console.log("[USER API] No user found")
+      return NextResponse.json({ error: "No user found" }, { status: 401 })
+    }
+
+    console.log("[USER API] User found:", {
+      id: user.id,
+      email: user.email,
+    })
+
+    return NextResponse.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        user_metadata: user.user_metadata,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+      },
+    })
+  } catch (error) {
+    console.error("[USER API] Unexpected error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
