@@ -1,5 +1,5 @@
-import { createServerClient } from './supabase/createServerClient'
-import { createBrowserClient } from './supabase/createBrowserClient'
+import { createServerClient } from "./supabase/createServerClient"
+import { createBrowserClient } from "./supabase/createBrowserClient"
 
 export interface ContractTemplate {
   id: string
@@ -15,7 +15,7 @@ export interface ContractTemplate {
 export interface FormField {
   id: string
   label: string
-  type: 'text' | 'textarea' | 'select' | 'date' | 'number'
+  type: "text" | "textarea" | "select" | "date" | "number"
   placeholder?: string
   required: boolean
   options?: string[]
@@ -33,47 +33,47 @@ export interface Contract {
 
 // Fallback NDA template for when database is unavailable
 const fallbackNDATemplate: ContractTemplate = {
-  id: 'nda',
-  name: 'Non-Disclosure Agreement (NDA)',
-  description: 'Protect confidential information between parties',
-  type: 'nda',
-  estimated_time: '5 min',
-  category: 'Legal',
+  id: "nda",
+  name: "Non-Disclosure Agreement (NDA)",
+  description: "Protect confidential information between parties",
+  type: "nda",
+  estimated_time: "5 min",
+  category: "Legal",
   form_fields: [
     {
-      id: 'disclosing_party',
-      label: 'Disclosing Party Name',
-      type: 'text',
-      placeholder: 'Company or individual sharing information',
-      required: true
+      id: "disclosing_party",
+      label: "Disclosing Party Name",
+      type: "text",
+      placeholder: "Company or individual sharing information",
+      required: true,
     },
     {
-      id: 'receiving_party',
-      label: 'Receiving Party Name',
-      type: 'text',
-      placeholder: 'Company or individual receiving information',
-      required: true
+      id: "receiving_party",
+      label: "Receiving Party Name",
+      type: "text",
+      placeholder: "Company or individual receiving information",
+      required: true,
     },
     {
-      id: 'effective_date',
-      label: 'Effective Date',
-      type: 'date',
-      required: true
+      id: "effective_date",
+      label: "Effective Date",
+      type: "date",
+      required: true,
     },
     {
-      id: 'purpose',
-      label: 'Purpose of Disclosure',
-      type: 'textarea',
-      placeholder: 'Describe the purpose for sharing confidential information',
-      required: true
+      id: "purpose",
+      label: "Purpose of Disclosure",
+      type: "textarea",
+      placeholder: "Describe the purpose for sharing confidential information",
+      required: true,
     },
     {
-      id: 'duration',
-      label: 'Agreement Duration (years)',
-      type: 'select',
-      options: ['1', '2', '3', '5', '10'],
-      required: true
-    }
+      id: "duration",
+      label: "Agreement Duration (years)",
+      type: "select",
+      options: ["1", "2", "3", "5", "10"],
+      required: true,
+    },
   ],
   template_content: `NON-DISCLOSURE AGREEMENT
 
@@ -96,12 +96,12 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the date firs
 
 _________________________          _________________________
 {{disclosing_party}}                {{receiving_party}}
-Disclosing Party                     Receiving Party`
+Disclosing Party                     Receiving Party`,
 }
 
 export async function getContractTemplate(type: string): Promise<ContractTemplate | null> {
   console.log(`🔍 [CONTRACTS] Fetching template for type: ${type}`)
-  
+
   try {
     // Try to get from server-side first
     let supabase
@@ -115,10 +115,10 @@ export async function getContractTemplate(type: string): Promise<ContractTemplat
 
     console.log("📊 [CONTRACTS] Querying contract_templates table...")
     const { data, error } = await supabase
-      .from('contract_templates')
-      .select('*')
-      .eq('contract_type', type)
-      .eq('is_active', true)
+      .from("contract_templates")
+      .select("*")
+      .eq("contract_type", type)
+      .eq("is_active", true)
       .limit(1)
 
     console.log("📊 [CONTRACTS] Database query result:")
@@ -128,7 +128,7 @@ export async function getContractTemplate(type: string): Promise<ContractTemplat
 
     if (error) {
       console.error("❌ [CONTRACTS] Database error:", error)
-      if (type === 'nda') {
+      if (type === "nda") {
         console.log("🔄 [CONTRACTS] Using fallback NDA template")
         return fallbackNDATemplate
       }
@@ -137,7 +137,7 @@ export async function getContractTemplate(type: string): Promise<ContractTemplat
 
     if (!data || data.length === 0) {
       console.warn(`⚠️ [CONTRACTS] No template found for type: ${type}`)
-      if (type === 'nda') {
+      if (type === "nda") {
         console.log("🔄 [CONTRACTS] Using fallback NDA template")
         return fallbackNDATemplate
       }
@@ -149,36 +149,35 @@ export async function getContractTemplate(type: string): Promise<ContractTemplat
       id: template.id,
       contract_type: template.contract_type,
       has_form_fields: !!template.form_fields,
-      has_template_content: !!template.template_content
+      has_template_content: !!template.template_content,
     })
 
     // Convert database template to our format
     const convertedTemplate: ContractTemplate = {
       id: template.contract_type,
       name: template.contract_type
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' '),
-      description: `Professional ${template.contract_type.replace('-', ' ')} template`,
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+      description: `Professional ${template.contract_type.replace("-", " ")} template`,
       type: template.contract_type,
       form_fields: template.form_fields || [],
-      template_content: template.template_content || '',
-      estimated_time: '5-10 min',
-      category: 'Legal'
+      template_content: template.template_content || "",
+      estimated_time: "5-10 min",
+      category: "Legal",
     }
 
     console.log("🔄 [CONTRACTS] Converted template:", {
       name: convertedTemplate.name,
       type: convertedTemplate.type,
       form_fields_count: convertedTemplate.form_fields.length,
-      template_content_length: convertedTemplate.template_content.length
+      template_content_length: convertedTemplate.template_content.length,
     })
 
     return convertedTemplate
-
   } catch (error) {
     console.error("💥 [CONTRACTS] Exception in getContractTemplate:", error)
-    if (type === 'nda') {
+    if (type === "nda") {
       console.log("🔄 [CONTRACTS] Using fallback NDA template due to exception")
       return fallbackNDATemplate
     }
@@ -188,7 +187,7 @@ export async function getContractTemplate(type: string): Promise<ContractTemplat
 
 export async function getContractTemplates(): Promise<ContractTemplate[]> {
   console.log("🔍 [CONTRACTS] Fetching all contract templates")
-  
+
   try {
     let supabase
     try {
@@ -200,10 +199,10 @@ export async function getContractTemplates(): Promise<ContractTemplate[]> {
     }
 
     const { data, error } = await supabase
-      .from('contract_templates')
-      .select('*')
-      .eq('is_active', true)
-      .order('contract_type')
+      .from("contract_templates")
+      .select("*")
+      .eq("is_active", true)
+      .order("contract_type")
 
     console.log("📊 [CONTRACTS] Database query result:")
     console.log("- Error:", error)
@@ -219,23 +218,22 @@ export async function getContractTemplates(): Promise<ContractTemplate[]> {
       return [fallbackNDATemplate]
     }
 
-    const templates = data.map(template => ({
+    const templates = data.map((template) => ({
       id: template.contract_type,
       name: template.contract_type
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' '),
-      description: `Professional ${template.contract_type.replace('-', ' ')} template`,
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+      description: `Professional ${template.contract_type.replace("-", " ")} template`,
       type: template.contract_type,
       form_fields: template.form_fields || [],
-      template_content: template.template_content || '',
-      estimated_time: '5-10 min',
-      category: 'Legal'
+      template_content: template.template_content || "",
+      estimated_time: "5-10 min",
+      category: "Legal",
     }))
 
     console.log("✅ [CONTRACTS] Successfully fetched templates:", templates.length)
     return templates
-
   } catch (error) {
     console.error("💥 [CONTRACTS] Exception in getContractTemplates:", error)
     return [fallbackNDATemplate]
@@ -250,49 +248,52 @@ export async function getContractById(id: string): Promise<Contract | null> {
 
 export async function getContractsByUserId(userId: string): Promise<Contract[]> {
   const supabase = createServerClient()
-  
+
   try {
     const { data, error } = await supabase
-      .from('contracts')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
+      .from("contracts")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
 
     if (error) {
-      console.error('Error fetching contracts:', error)
+      console.error("Error fetching contracts:", error)
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error('Error fetching contracts:', error)
+    console.error("Error fetching contracts:", error)
     return []
   }
 }
 
-export async function saveContract(formData: FormData, userId: string | null): Promise<{ success: boolean; contractId?: string; error?: string }> {
+export async function saveContract(
+  formData: FormData,
+  userId: string | null,
+): Promise<{ success: boolean; contractId?: string; error?: string }> {
   try {
-    const contractType = formData.get('contractType') as string
+    const contractType = formData.get("contractType") as string
     const template = await getContractTemplate(contractType)
-    
+
     if (!template) {
-      return { success: false, error: 'Contract template not found' }
+      return { success: false, error: "Contract template not found" }
     }
 
     // Extract form data
     const extractedData: Record<string, string> = {}
-    template.form_fields.forEach(field => {
+    template.form_fields.forEach((field) => {
       const value = formData.get(field.id) as string
       if (value) {
         extractedData[field.id] = value
       }
     })
 
-    // Generate contract content by replacing placeholders
+    // Generate contract content by replacing placeholders (literal replacement, no RegExp)
     let content = template.template_content
     Object.entries(extractedData).forEach(([key, value]) => {
       const placeholder = `{{${key}}}`
-      content = content.replace(new RegExp(placeholder, 'g'), value)
+      content = content.split(placeholder).join(value)
     })
 
     const contractData = {
@@ -302,7 +303,7 @@ export async function saveContract(formData: FormData, userId: string | null): P
       form_data: extractedData,
       content: content,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     // Save to localStorage for demo purposes
@@ -310,7 +311,7 @@ export async function saveContract(formData: FormData, userId: string | null): P
 
     return { success: true, contractId: contractData.id }
   } catch (error) {
-    console.error('Error saving contract:', error)
-    return { success: false, error: 'Failed to save contract' }
+    console.error("Error saving contract:", error)
+    return { success: false, error: "Failed to save contract" }
   }
 }
