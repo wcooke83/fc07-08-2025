@@ -5,6 +5,7 @@ out/
 # Node.js
 node_modules/
 .npm
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -17,7 +18,7 @@ node_modules/
 # VS Code
 .vscode/
 
-# npm
+# npm / pnpm / yarn
 npm-debug.log*
 .pnpm-debug.log*
 .yarn-debug.log*
@@ -34,10 +35,7 @@ logs/
 *.log
 
 # Misc
-.env
-.env.*
 .idea/
-.DS_Store
 *.tgz
 *.swp
 *.swo
@@ -46,15 +44,12 @@ logs/
 *.sublime-project
 *.sublime-workspace
 *.history
-*.log
 *.csv
 *.sql
 *.sqlite
 *.sqlite3
 *.db
 *.xml
-*.yml
-*.yaml
 *.toml
 *.ini
 *.cfg
@@ -67,34 +62,6 @@ logs/
 *.rej
 *.diff
 *.patch
-*.swp
-*.swo
-*.bak
-*.tmp
-*.sublime-project
-*.sublime-workspace
-*.history
-*.log
-*.csv
-*.sql
-*.sqlite
-*.sqlite3
-*.db
-*.json
-*.xml
-*.yml
-*.yaml
-*.toml
-*.ini
-*.cfg
-*.conf
-*.pid
-*.sock
-*.lock
-*.backup
-*.orig
-*.rej
-*.diff
-*.patch
+
 # Vercel
 .vercel/
