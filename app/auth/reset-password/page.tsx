@@ -1,70 +1,167 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { createServerSupabaseClient } from "@/lib/supabase/createServerSupabaseClient"
-import { redirect } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { createBrowserClient } from "@/lib/supabase/createBrowserClient"
+import { useToast } from "@/hooks/use-toast"
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: { code: string; error: string }
-}) {
-  const { code, error } = searchParams
+export default function ResetPasswordPage() {
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [hasValidSession, setHasValidSession] = useState(false)
 
-  if (!code) {
-    redirect("/forgot-password")
-  }
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { toast } = useToast()
+  const supabase = createBrowserClient()
 
-  const supabase = createServerSupabaseClient()
+  useEffect(() => {
+    console.log("[RESET PASSWORD] Page loaded")
+    console.log("[RESET PASSWORD] Search params:", Object.fromEntries(searchParams.entries()))
 
-  const handleResetPassword = async (formData: FormData) => {
-    "use server"
-    const password = formData.get("password") as string
-    const confirmPassword = formData.get("confirmPassword") as string
+    // Check if user has a valid session (from the callback)
+    const checkSession = async () => {
+      console.log("[RESET PASSWORD] Checking user session...")
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession()
+
+      console.log("[RESET PASSWORD] Session check result:", {
+        hasSession: !!session,
+        error: error?.message,
+        user: session?.user?.email,
+      })
+
+      if (session) {
+        console.log("[RESET PASSWORD] Valid session found, user can reset password")
+        setHasValidSession(true)
+      } else {
+        console.log("[RESET PASSWORD] No valid session, redirecting to forgot password")
+        toast({
+          title: "Invalid or expired reset link",
+          description: "Please request a new password reset.",
+          variant: "destructive",
+        })
+        router.push("/forgot-password")
+      }
+    }
+
+    checkSession()
+  }, [searchParams, supabase, router, toast])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("[RESET PASSWORD] Form submitted")
 
     if (password !== confirmPassword) {
-      redirect("/auth/reset-password?error=Passwords do not match")
+      setError("Passwords do not match")
+      return
     }
 
-    const { error } = await supabase.auth.updateUser({ password })
-
-    if (error) {
-      console.error("Password reset error:", error)
-      redirect(`/auth/reset-password?error=${encodeURIComponent(error.message)}`)
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
+      return
     }
 
-    redirect("/login?message=Your password has been reset successfully. Please log in.")
+    setLoading(true)
+    setError("")
+
+    try {
+      console.log("[RESET PASSWORD] Updating password...")
+      const { error } = await supabase.auth.updateUser({
+        password: password,
+      })
+
+      if (error) {
+        console.error("[RESET PASSWORD] Error updating password:", error)
+        setError(error.message)
+      } else {
+        console.log("[RESET PASSWORD] Password updated successfully")
+        toast({
+          title: "Password updated",
+          description: "Your password has been successfully updated.",
+        })
+
+        // Sign out and redirect to login
+        await supabase.auth.signOut()
+        router.push("/login")
+      }
+    } catch (error: any) {
+      console.error("[RESET PASSWORD] Unexpected error:", error)
+      setError("An unexpected error occurred")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!hasValidSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Verifying Reset Link</CardTitle>
+            <CardDescription>Please wait while we verify your password reset link...</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    )
   }
 
   return (
-    <div className="flex min-h-[calc(100vh_-_theme(spacing.16))] items-center justify-center px-4 py-12">
-      <Card className="mx-auto max-w-sm">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Reset Password</CardTitle>
-          <CardDescription>Enter your new password below.</CardDescription>
+          <CardTitle>Reset Your Password</CardTitle>
+          <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={handleResetPassword} className="grid gap-4">
-            <div className="grid gap-2">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="space-y-2">
               <Label htmlFor="password">New Password</Label>
-              <Input id="password" name="password" type="password" required />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="Enter new password"
+              />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input id="confirmPassword" name="confirmPassword" type="password" required />
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="Confirm new password"
+              />
             </div>
-            {error && <p className="text-sm text-red-500">{decodeURIComponent(error)}</p>}
-            <Button type="submit" className="w-full">
-              Reset Password
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Updating Password..." : "Update Password"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <Link href="/login" className="underline">
-              Back to Login
-            </Link>
-          </div>
         </CardContent>
       </Card>
     </div>
