@@ -1,42 +1,21 @@
-import { createServerSupabaseClient } from "@/lib/supabase/createServerSupabaseClient"
-import { NextResponse } from "next/server"
-import { saveContract } from "@/lib/contracts"
+import { type NextRequest, NextResponse } from "next/server"
+import { createServerClientAppRouter } from "@/lib/supabase/createAppRouterClient"
 
-export async function POST(request: Request) {
-  const supabase = await createServerSupabaseClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export const dynamic = "force-dynamic"
 
-  // For anonymous contract creation, user_id will be null
-  const userId = user?.id || null
-
+export async function GET(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    const result = await saveContract(formData, userId)
+    const supabase = await createServerClientAppRouter()
 
-    if (result.success) {
-      return NextResponse.json({ contractId: result.contractId }, { status: 200 })
-    } else {
-      return NextResponse.json({ error: result.error || "Failed to create contract" }, { status: 500 })
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-  } catch (error: any) {
-    console.error("API Error saving contract:", error)
-    return NextResponse.json({ error: error.message || "Failed to save contract" }, { status: 500 })
-  }
-}
 
-export async function GET(request: Request) {
-  const supabase = await createServerSupabaseClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  try {
     const { data: contracts, error } = await supabase
       .from("contracts")
       .select("*")
@@ -45,12 +24,48 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("Error fetching contracts:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: "Failed to fetch contracts" }, { status: 500 })
     }
 
-    return NextResponse.json(contracts, { status: 200 })
-  } catch (error: any) {
-    console.error("API Error fetching contracts:", error)
-    return NextResponse.json({ error: error.message || "Failed to fetch contracts" }, { status: 500 })
+    return NextResponse.json({ contracts })
+  } catch (error) {
+    console.error("Contracts API error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = await createServerClientAppRouter()
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const contractData = await request.json()
+
+    const { data: contract, error } = await supabase
+      .from("contracts")
+      .insert({
+        ...contractData,
+        user_id: user.id,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Error creating contract:", error)
+      return NextResponse.json({ error: "Failed to create contract" }, { status: 500 })
+    }
+
+    return NextResponse.json({ contract })
+  } catch (error) {
+    console.error("Create contract API error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

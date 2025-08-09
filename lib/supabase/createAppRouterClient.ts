@@ -3,9 +3,9 @@ import { createServerClient as createSupabaseServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 
 // For App Router (app/*) - uses Next.js 13+ cookies()
-export function createServerClientAppRouter() {
+export async function createServerClientAppRouter() {
   try {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
 
     return createSupabaseServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

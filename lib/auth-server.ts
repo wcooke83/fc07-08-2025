@@ -1,73 +1,58 @@
-import { createServerClientAppRouter } from "./supabase/createAppRouterClient"
+import { createServerClientAppRouter } from "@/lib/supabase/createAppRouterClient"
+import { redirect } from "next/navigation"
+import type { User } from "@supabase/supabase-js"
 
-export async function getCurrentUser() {
+export async function getUser(): Promise<User | null> {
   try {
-    const supabase = createServerClientAppRouter()
+    const supabase = await createServerClientAppRouter()
 
     const {
       data: { user },
+      error,
     } = await supabase.auth.getUser()
+
+    if (error) {
+      console.error("Error getting user:", error)
+      return null
+    }
 
     return user
   } catch (error) {
-    console.error("Error getting current user:", error)
-    return null
-  }
-}
-
-export async function getSession() {
-  try {
-    const supabase = createServerClientAppRouter()
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-
-    return session
-  } catch (error) {
-    console.error("Error getting session:", error)
+    console.error("Error in getUser:", error)
     return null
   }
 }
 
 export async function getProfile() {
   try {
-    const supabase = createServerClientAppRouter()
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const user = await getUser()
 
     if (!user) {
       return null
     }
 
-    // Return basic profile information from the user object
-    return {
-      id: user.id,
-      email: user.email,
-      full_name: user.user_metadata?.full_name || null,
-      avatar_url: user.user_metadata?.avatar_url || null,
-      created_at: user.created_at,
-      updated_at: user.updated_at,
+    const supabase = await createServerClientAppRouter()
+
+    const { data: profile, error } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+
+    if (error) {
+      console.error("Error getting profile:", error)
+      return null
     }
+
+    return profile
   } catch (error) {
-    console.error("Error getting profile:", error)
+    console.error("Error in getProfile:", error)
     return null
   }
 }
 
-export async function getUser() {
-  try {
-    const supabase = createServerClientAppRouter()
+export async function requireAuth() {
+  const user = await getUser()
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    return user
-  } catch (error) {
-    console.error("Error getting user:", error)
-    return null
+  if (!user) {
+    redirect("/login")
   }
+
+  return user
 }

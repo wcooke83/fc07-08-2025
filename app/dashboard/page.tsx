@@ -7,6 +7,8 @@ import { getContractsByUserId } from "@/lib/contracts"
 import { format } from "date-fns"
 import { PlusIcon, FileTextIcon } from "lucide-react"
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardPage() {
   const user = await getUser()
   const profile = await getProfile()
