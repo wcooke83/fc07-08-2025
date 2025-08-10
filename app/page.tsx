@@ -125,7 +125,7 @@ export default function HomePage({ searchParams }: { searchParams: { error?: str
           <div className="mx-auto mt-16 max-w-5xl">
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {features.map((feature, index) => (
-                <Card key={index} className="text-center">
+                <Card key={index} className="text-center bg-white dark:bg-black border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 transition-colors">
                   <CardHeader>
                     <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400">
                       {feature.icon}
