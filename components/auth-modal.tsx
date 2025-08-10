@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { LoginForm } from "./login-form"
-import { RegisterForm } from "./register-form"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { LoginForm } from "@/components/login-form"
+import { RegisterForm } from "@/components/register-form"
 
 interface AuthModalProps {
   isOpen: boolean
@@ -13,35 +13,26 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalProps) {
-  const [activeTab, setActiveTab] = useState<"login" | "register">(defaultTab)
+  const [activeTab, setActiveTab] = useState(defaultTab)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{activeTab === "login" ? "Sign In" : "Create Account"}</DialogTitle>
+          <DialogTitle>{activeTab === "login" ? "Sign in to your account" : "Create your account"}</DialogTitle>
         </DialogHeader>
-
-        <div className="space-y-4">
-          <div className="flex border-b">
-            <Button
-              variant={activeTab === "login" ? "default" : "ghost"}
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-              onClick={() => setActiveTab("login")}
-            >
-              Sign In
-            </Button>
-            <Button
-              variant={activeTab === "register" ? "default" : "ghost"}
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-              onClick={() => setActiveTab("register")}
-            >
-              Sign Up
-            </Button>
-          </div>
-
-          {activeTab === "login" ? <LoginForm onSuccess={onClose} /> : <RegisterForm onSuccess={onClose} />}
-        </div>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "login" | "register")}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="login">Sign In</TabsTrigger>
+            <TabsTrigger value="register">Sign Up</TabsTrigger>
+          </TabsList>
+          <TabsContent value="login">
+            <LoginForm onSuccess={onClose} />
+          </TabsContent>
+          <TabsContent value="register">
+            <RegisterForm onSuccess={onClose} />
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   )

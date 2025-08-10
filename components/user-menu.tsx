@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/lib/auth-provider"
-import { User, Settings, FileText, LogOut } from "lucide-react"
+import { User, Settings, LogOut, FileText } from "lucide-react"
 
 export function UserMenu() {
   const { user, signOut } = useAuth()
@@ -35,14 +34,15 @@ export function UserMenu() {
 
   if (!user) return null
 
-  const userInitials =
-    user.email
-      ?.split("@")[0]
-      .split(".")
-      .map((name) => name[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "U"
+  const initials = user.email
+    ? user.email
+        .split("@")[0]
+        .split(".")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "U"
 
   return (
     <DropdownMenu>
@@ -50,7 +50,7 @@ export function UserMenu() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage src={user.user_metadata?.avatar_url || "/placeholder.svg"} alt={user.email || ""} />
-            <AvatarFallback>{userInitials}</AvatarFallback>
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -64,23 +64,17 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard">
-            <User className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
-          </Link>
+        <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+          <User className="mr-2 h-4 w-4" />
+          <span>Dashboard</span>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/contracts">
-            <FileText className="mr-2 h-4 w-4" />
-            <span>My Contracts</span>
-          </Link>
+        <DropdownMenuItem onClick={() => router.push("/contracts")}>
+          <FileText className="mr-2 h-4 w-4" />
+          <span>My Contracts</span>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </Link>
+        <DropdownMenuItem onClick={() => router.push("/settings")}>
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} disabled={isLoading}>

@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { createBrowserClient } from "@/lib/supabase/createBrowserClient"
+import { useAuth } from "@/lib/auth-provider"
+import { Loader2 } from "lucide-react"
 
 interface RegisterFormProps {
   onSuccess?: () => void
@@ -20,6 +21,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const { signUp } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,21 +36,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     }
 
     try {
-      const supabase = createBrowserClient()
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-
-      if (error) {
-        setError(error.message)
-        return
-      }
-
+      await signUp(email, password)
       onSuccess?.()
-      router.refresh()
-    } catch (err) {
-      setError("An unexpected error occurred")
+      router.push("/dashboard")
+    } catch (error: any) {
+      setError(error.message || "An error occurred during sign up")
     } finally {
       setIsLoading(false)
     }
@@ -67,6 +59,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         <Input
           id="register-email"
           type="email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -79,11 +72,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         <Input
           id="register-password"
           type="password"
+          placeholder="Create a password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           disabled={isLoading}
-          minLength={6}
         />
       </div>
 
@@ -92,16 +85,17 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         <Input
           id="confirm-password"
           type="password"
+          placeholder="Confirm your password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
           disabled={isLoading}
-          minLength={6}
         />
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Creating account..." : "Create Account"}
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        Sign Up
       </Button>
     </form>
   )

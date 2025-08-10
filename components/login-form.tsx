@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { createBrowserClient } from "@/lib/supabase/createBrowserClient"
+import { useAuth } from "@/lib/auth-provider"
+import { Loader2 } from "lucide-react"
 
 interface LoginFormProps {
   onSuccess?: () => void
@@ -19,6 +20,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const { signIn } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,21 +29,11 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setError("")
 
     try {
-      const supabase = createBrowserClient()
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        setError(error.message)
-        return
-      }
-
+      await signIn(email, password)
       onSuccess?.()
-      router.refresh()
-    } catch (err) {
-      setError("An unexpected error occurred")
+      router.push("/dashboard")
+    } catch (error: any) {
+      setError(error.message || "An error occurred during sign in")
     } finally {
       setIsLoading(false)
     }
@@ -60,6 +52,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <Input
           id="email"
           type="email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -72,6 +65,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <Input
           id="password"
           type="password"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -80,7 +74,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Signing in..." : "Sign In"}
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        Sign In
       </Button>
     </form>
   )
